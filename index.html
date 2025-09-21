@@ -3,24 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Lesson Plan Generator - Smart Teaching Tools</title>
-    <link rel="stylesheet" href="styles.css?v=3">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>BrightMind AI - Comprehensive Educational Services Platform</title>
+    <link rel="stylesheet" href="styles.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <i class="fas fa-graduation-cap"></i>
-                <h1>AI Lesson Plan Generator</h1>
-            </div>
-            <p class="tagline">Create engaging, standards-aligned lesson plans in minutes</p>
-        </header>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-brain"></i>
+                <span>BrightMind AI</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#lesson-generator">Lesson Generator</a></li>
+                <li><a href="#quiz-maker">Quiz Maker</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">BrightMind AI</h1>
+                <p class="hero-subtitle">Comprehensive Educational Services Platform</p>
+                <p class="hero-description">Empowering educators with AI-driven tools for lesson planning, quiz creation, and educational content generation</p>
+                <div class="hero-buttons">
+                    <a href="#lesson-generator" class="btn-primary">Start Creating</a>
+                    <a href="#services" class="btn-secondary">Explore Services</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services-section">
+            <div class="services-container">
+                <h2 class="section-title">Our Educational Services</h2>
+                <p class="section-subtitle">Comprehensive AI-powered tools for modern education</p>
+                
+                <div class="services-grid">
+                    <div class="service-card" data-service="lesson-generator">
+                        <div class="service-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3>AI Lesson Plan Generator</h3>
+                        <p>Create comprehensive, standards-aligned lesson plans in minutes with AI assistance</p>
+                        <ul class="service-features">
+                            <li>500+ pre-written activities</li>
+                            <li>Common Core & NGSS alignment</li>
+                            <li>Differentiation strategies</li>
+                            <li>PDF export capability</li>
+                        </ul>
+                        <a href="#lesson-generator" class="service-btn">Try Now</a>
+                    </div>
+
+                    <div class="service-card" data-service="quiz-maker">
+                        <div class="service-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>Smart Quiz Generator</h3>
+                        <p>Generate engaging quizzes and assessments with multiple question types</p>
+                        <ul class="service-features">
+                            <li>Multiple choice questions</li>
+                            <li>True/False questions</li>
+                            <li>Short answer questions</li>
+                            <li>Auto-grading capability</li>
+                        </ul>
+                        <a href="#quiz-maker" class="service-btn">Create Quiz</a>
+                    </div>
+
+                    <div class="service-card" data-service="content-generator">
+                        <div class="service-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3>Educational Content Generator</h3>
+                        <p>Generate worksheets, handouts, and educational materials automatically</p>
+                        <ul class="service-features">
+                            <li>Worksheet templates</li>
+                            <li>Reading comprehension</li>
+                            <li>Math problems</li>
+                            <li>Science experiments</li>
+                        </ul>
+                        <a href="#content-generator" class="service-btn">Generate Content</a>
+                    </div>
+
+                    <div class="service-card" data-service="assessment-tools">
+                        <div class="service-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Assessment & Analytics</h3>
+                        <p>Track student progress and generate detailed performance reports</p>
+                        <ul class="service-features">
+                            <li>Progress tracking</li>
+                            <li>Performance analytics</li>
+                            <li>Grade calculation</li>
+                            <li>Parent reports</li>
+                        </ul>
+                        <a href="#assessment" class="service-btn">View Analytics</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson Generator Section -->
+        <section id="lesson-generator" class="main-content">
             <!-- Input Form -->
             <section class="input-section">
                 <div class="form-container">
@@ -160,13 +265,213 @@
             </section>
         </main>
 
+        <!-- Quiz Maker Section -->
+        <section id="quiz-maker" class="quiz-section">
+            <div class="quiz-container">
+                <h2 class="section-title">Smart Quiz Generator</h2>
+                <p class="section-subtitle">Create engaging assessments in seconds</p>
+                
+                <div class="quiz-form-container">
+                    <form id="quizForm" class="quiz-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quizTopic">Quiz Topic</label>
+                                <input type="text" id="quizTopic" name="quizTopic" placeholder="e.g., World War II, Photosynthesis, Fractions" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="quizSubject">Subject</label>
+                                <select id="quizSubject" name="quizSubject" required>
+                                    <option value="">Select subject</option>
+                                    <option value="history">History</option>
+                                    <option value="science">Science</option>
+                                    <option value="math">Mathematics</option>
+                                    <option value="english">English</option>
+                                    <option value="geography">Geography</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quizGrade">Grade Level</label>
+                                <select id="quizGrade" name="quizGrade" required>
+                                    <option value="">Select grade</option>
+                                    <option value="elementary">Elementary (K-5)</option>
+                                    <option value="middle">Middle School (6-8)</option>
+                                    <option value="high">High School (9-12)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="questionCount">Number of Questions</label>
+                                <select id="questionCount" name="questionCount" required>
+                                    <option value="5">5 Questions</option>
+                                    <option value="10" selected>10 Questions</option>
+                                    <option value="15">15 Questions</option>
+                                    <option value="20">20 Questions</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="questionTypes">Question Types</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="questionTypes" value="multiple-choice" checked>
+                                    <span>Multiple Choice</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="questionTypes" value="true-false" checked>
+                                    <span>True/False</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="questionTypes" value="short-answer">
+                                    <span>Short Answer</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="generate-btn">
+                            <i class="fas fa-magic"></i>
+                            Generate Quiz
+                        </button>
+                    </form>
+                </div>
+                
+                <div id="quizResults" class="quiz-results hidden">
+                    <div class="quiz-header">
+                        <h3>Generated Quiz</h3>
+                        <div class="quiz-actions">
+                            <button id="downloadQuiz" class="btn-secondary">
+                                <i class="fas fa-download"></i>
+                                Download PDF
+                            </button>
+                            <button id="regenerateQuiz" class="btn-secondary">
+                                <i class="fas fa-redo"></i>
+                                Regenerate
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quizContent" class="quiz-content">
+                        <!-- Generated quiz will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="about-container">
+                <h2 class="section-title">About BrightMind AI</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>BrightMind AI is a comprehensive educational services platform designed to empower educators with cutting-edge AI technology. Our mission is to revolutionize education by providing intelligent tools that enhance teaching effectiveness and student learning outcomes.</p>
+                        
+                        <h3>Our Vision</h3>
+                        <p>To create a world where every educator has access to powerful AI-driven tools that make teaching more efficient, engaging, and effective.</p>
+                        
+                        <h3>Key Features</h3>
+                        <ul>
+                            <li>AI-powered lesson plan generation</li>
+                            <li>Smart quiz and assessment creation</li>
+                            <li>Educational content generation</li>
+                            <li>Student progress analytics</li>
+                            <li>Standards-aligned curriculum support</li>
+                        </ul>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <h3>500+</h3>
+                            <p>Educational Activities</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>10,000+</h3>
+                            <p>Teachers Served</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>50+</h3>
+                            <p>Countries</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>99%</h3>
+                            <p>Satisfaction Rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="contact-container">
+                <h2 class="section-title">Get in Touch</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>contact@brightmind-ai.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>San Francisco, CA</span>
+                        </div>
+                    </div>
+                    <div class="contact-form">
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <input type="text" placeholder="Your Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" placeholder="Your Email" required>
+                            </div>
+                            <div class="form-group">
+                                <textarea placeholder="Your Message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="footer">
-            <p>&copy; 2024 AI Lesson Plan Generator. Built for educators, by educators.</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BrightMind AI</h3>
+                    <p>Empowering educators with AI-driven educational tools and services.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#lesson-generator">Lesson Generator</a></li>
+                        <li><a href="#quiz-maker">Quiz Maker</a></li>
+                        <li><a href="#content-generator">Content Generator</a></li>
+                        <li><a href="#assessment">Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 BrightMind AI. All rights reserved. Empowering education through artificial intelligence.</p>
+            </div>
         </footer>
     </div>
 
-    <script src="script.js?v=3"></script>
-    <script src="working-llm-integration.js?v=3"></script>
+    <script src="script.js?v=4"></script>
+    <script src="working-llm-integration.js?v=4"></script>
+    <script src="quiz-generator.js?v=4"></script>
 </body>
 </html>
