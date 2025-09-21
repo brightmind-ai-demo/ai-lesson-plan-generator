@@ -6,6 +6,7 @@ class WorkingLLMLessonGenerator extends LessonPlanGenerator {
         super();
         this.llmServices = this.initializeWorkingServices();
         this.currentService = 'local'; // Default to local
+        console.log('WorkingLLMLessonGenerator initialized with services:', this.llmServices);
         this.init();
     }
 
@@ -75,7 +76,17 @@ class WorkingLLMLessonGenerator extends LessonPlanGenerator {
     }
 
     selectService(serviceId) {
-        this.currentService = serviceId;
+        console.log('Selecting service:', serviceId);
+        console.log('Available services:', Object.keys(this.llmServices));
+        
+        if (this.llmServices[serviceId]) {
+            this.currentService = serviceId;
+            console.log('Service selected successfully:', this.currentService);
+        } else {
+            console.warn('Service not found, falling back to local:', serviceId);
+            this.currentService = 'local';
+        }
+        
         this.updateStatus();
     }
 
@@ -152,13 +163,18 @@ class WorkingLLMLessonGenerator extends LessonPlanGenerator {
     async generateWithLLM(data) {
         const prompt = this.createLLMPrompt(data);
         console.log('LLM Prompt:', prompt);
+        console.log('Current service:', this.currentService);
+        console.log('Available services:', Object.keys(this.llmServices));
         
         try {
             const service = this.llmServices[this.currentService];
+            console.log('Selected service:', service);
+            
             if (!service) {
-                throw new Error('Service not found');
+                throw new Error(`Service not found: ${this.currentService}`);
             }
             
+            console.log('Making API call to:', service.endpoint);
             const response = await fetch(service.endpoint, {
                 method: 'POST',
                 headers: {
