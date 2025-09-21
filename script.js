@@ -13,6 +13,7 @@ class LessonPlanGenerator {
     init() {
         this.setupEventListeners();
         this.setupFormValidation();
+        this.setupNavigation();
     }
 
     setupEventListeners() {
@@ -29,6 +30,63 @@ class LessonPlanGenerator {
         const inputs = document.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             input.addEventListener('blur', () => this.validateField(input));
+        });
+    }
+
+    setupNavigation() {
+        // Add click handlers for service buttons
+        const serviceButtons = document.querySelectorAll('.service-btn');
+        serviceButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = button.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Add visual feedback
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transform = 'scale(1)';
+                    }, 150);
+                    
+                    // Scroll to target with offset for fixed navbar
+                    const offset = 80; // Account for navbar height
+                    const targetPosition = targetElement.offsetTop - offset;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Highlight the target section briefly
+                    targetElement.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
+                    setTimeout(() => {
+                        targetElement.style.boxShadow = '';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Add click handlers for navigation menu items
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href');
+                if (targetId.startsWith('#')) {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        const offset = 80;
+                        const targetPosition = targetElement.offsetTop - offset;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
         });
     }
 
