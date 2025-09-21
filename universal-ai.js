@@ -66,34 +66,9 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
     }
 
     addAIControls() {
-        const form = document.querySelector('.lesson-form');
-        if (!form) return;
-
-        // Add AI service selector
-        const aiSelector = document.createElement('div');
-        aiSelector.className = 'form-group ai-selector';
-        aiSelector.innerHTML = `
-            <label for="aiService">AI Generation Method</label>
-            <select id="aiService" name="aiService">
-                <option value="local">Local AI Generation (No API Required)</option>
-                <option value="github">GitHub AI (GPT-4o) - Best Quality</option>
-                <option value="freeAI">Free AI (Hugging Face) - Limited</option>
-            </select>
-            <div class="ai-status" id="aiStatus">
-                <i class="fas fa-info-circle"></i>
-                <span>Using Local AI Generation</span>
-            </div>
-        `;
-
-        // Insert before the generate button
-        const generateBtn = form.querySelector('.generate-btn');
-        form.insertBefore(aiSelector, generateBtn);
-
-        // Add event listener
-        document.getElementById('aiService').addEventListener('change', (e) => {
-            this.currentService = e.target.value;
-            this.updateAIStatus();
-        });
+        // No need to add AI controls - we'll use GitHub AI directly
+        // The token is automatically detected from Codespaces secret
+        console.log('Using GitHub AI with automatic token detection');
     }
 
     updateAIStatus() {
@@ -109,47 +84,18 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
     }
 
     async generateLessonPlan(data) {
-        // Try AI generation first (no static data fallback)
-        if (this.currentService === 'github') {
-            try {
-                console.log('Attempting GitHub AI generation...');
-                const aiResult = await this.generateWithGitHubAI(data);
-                if (aiResult) {
-                    this.updateAIStatus('success', 'Generated with GitHub AI');
-                    return aiResult;
-                }
-            } catch (error) {
-                console.log('GitHub AI failed:', error.message);
-                this.updateAIStatus('error', 'GitHub AI failed - Please try again or use Free AI');
-                throw new Error('GitHub AI generation failed. Please try again or select Free AI option.');
+        // Use GitHub AI with automatic token detection
+        try {
+            console.log('Using GitHub AI with automatic token detection...');
+            const aiResult = await this.generateWithGitHubAI(data);
+            if (aiResult) {
+                console.log('✅ Successfully generated with GitHub AI');
+                return aiResult;
             }
-        } else if (this.currentService === 'freeAI') {
-            try {
-                console.log('Attempting free AI generation...');
-                const aiResult = await this.generateWithFreeAI(data);
-                if (aiResult) {
-                    this.updateAIStatus('success', 'Generated with Free AI');
-                    return aiResult;
-                }
-            } catch (error) {
-                console.log('Free AI failed:', error.message);
-                this.updateAIStatus('error', 'Free AI failed - Please try again');
-                throw new Error('Free AI generation failed. Please try again.');
-            }
-        } else {
-            // Local service - still use AI but with a different approach
-            try {
-                console.log('Attempting local AI generation...');
-                const aiResult = await this.generateWithLocalAI(data);
-                if (aiResult) {
-                    this.updateAIStatus('success', 'Generated with Local AI');
-                    return aiResult;
-                }
-            } catch (error) {
-                console.log('Local AI failed:', error.message);
-                this.updateAIStatus('error', 'AI generation failed - Please try again');
-                throw new Error('AI generation failed. Please try again.');
-            }
+        } catch (error) {
+            console.log('GitHub AI failed, using local generation:', error.message);
+            // Fallback to local generation if GitHub AI fails
+            return this.generateWithLocalAI(data);
         }
     }
 
