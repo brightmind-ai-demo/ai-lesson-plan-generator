@@ -84,18 +84,20 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
     }
 
     async generateLessonPlan(data) {
-        // Use GitHub AI with automatic token detection
+        // Always use GitHub AI API - no static data fallback
+        console.log('🚀 Calling GitHub AI API...');
+        console.log('📝 Topic:', data.topic);
+        console.log('📚 Subject:', data.subject);
+        console.log('🎓 Grade:', data.gradeLevel);
+        console.log('⏱️ Duration:', data.duration);
+        
         try {
-            console.log('Using GitHub AI with automatic token detection...');
             const aiResult = await this.generateWithGitHubAI(data);
-            if (aiResult) {
-                console.log('✅ Successfully generated with GitHub AI');
-                return aiResult;
-            }
+            console.log('✅ Successfully generated with GitHub AI API');
+            return aiResult;
         } catch (error) {
-            console.log('GitHub AI failed, using local generation:', error.message);
-            // Fallback to local generation if GitHub AI fails
-            return this.generateWithLocalAI(data);
+            console.error('❌ GitHub AI API failed:', error.message);
+            throw new Error(`AI generation failed: ${error.message}. Please check your token and try again.`);
         }
     }
 
@@ -106,6 +108,11 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
         if (!token) {
             throw new Error('No GitHub token available');
         }
+        
+        console.log('🌐 Making API call to GitHub AI...');
+        console.log('🔗 Endpoint: https://models.github.ai/inference/chat/completions');
+        console.log('🤖 Model: gpt-4o');
+        console.log('📝 Prompt length:', prompt.length);
         
         try {
             const response = await fetch('https://models.github.ai/inference/chat/completions', {
@@ -122,15 +129,22 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
                 })
             });
 
+            console.log('📡 API Response Status:', response.status);
+            
             if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
+                const errorText = await response.text();
+                console.error('❌ API Error Response:', errorText);
+                throw new Error(`API request failed: ${response.status} - ${errorText}`);
             }
 
             const result = await response.json();
+            console.log('✅ API Response received:', result);
+            console.log('📄 Generated content length:', result.choices?.[0]?.message?.content?.length || 0);
+            
             return this.parseGitHubAIResponse(result, data);
             
         } catch (error) {
-            console.error('GitHub AI generation error:', error);
+            console.error('❌ GitHub AI API Error:', error);
             throw error;
         }
     }
@@ -165,15 +179,7 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
         }
     }
 
-    async generateWithLocalAI(data) {
-        // For local service, we'll use a simple text generation approach
-        // This simulates AI without requiring external APIs
-        const prompt = this.createAIPrompt(data);
-        
-        // Simulate AI processing with educational content generation
-        const lessonPlan = this.generateEducationalContent(data);
-        return lessonPlan;
-    }
+    // Removed generateWithLocalAI - we only use GitHub AI API now
 
     createAIPrompt(data) {
         return `Create a comprehensive lesson plan for ${this.formatSubject(data.subject)} grade ${data.gradeLevel} about "${data.topic}" for ${data.duration} minutes. 
@@ -233,223 +239,9 @@ Make the content specific to the topic "${data.topic}" and appropriate for grade
         return lesson;
     }
 
-    generateEducationalContent(data) {
-        // Generate educational content based on the topic and grade level
-        // This creates dynamic content without static fallbacks
-        const topic = data.topic;
-        const grade = data.gradeLevel;
-        const subject = data.subject;
-        const duration = data.duration;
-        
-        // Generate objectives based on topic and grade level
-        const objectives = this.generateObjectives(topic, grade, subject);
-        const activities = this.generateActivities(topic, grade, subject, duration);
-        const materials = this.generateMaterials(topic, grade, subject);
-        const assessment = this.generateAssessment(topic, grade, subject);
-        const differentiation = this.generateDifferentiation(topic, grade, subject);
-        const standards = this.generateStandards(topic, grade, subject);
-        
-        return {
-            subject: data.subject,
-            gradeLevel: data.gradeLevel,
-            topic: data.topic,
-            duration: data.duration,
-            difficulty: data.difficulty,
-            objectives: objectives,
-            activities: activities,
-            materials: materials,
-            assessment: assessment,
-            differentiation: differentiation,
-            standards: standards,
-            aiGenerated: true,
-            aiContent: `Generated lesson plan for ${topic} - Grade ${grade} ${subject}`
-        };
-    }
+    // Removed all static data generation methods - we only use GitHub AI API
 
-    generateObjectives(topic, grade, subject) {
-        const gradeLevel = parseInt(grade);
-        const complexity = gradeLevel <= 3 ? 'basic' : gradeLevel <= 6 ? 'intermediate' : 'advanced';
-        
-        return [
-            `Students will identify key concepts related to ${topic}`,
-            `Students will demonstrate understanding of ${topic} through hands-on activities`,
-            `Students will apply knowledge of ${topic} to solve problems`,
-            `Students will communicate their understanding of ${topic} effectively`
-        ];
-    }
-
-    generateActivities(topic, grade, subject, duration) {
-        const gradeLevel = parseInt(grade);
-        const timePerActivity = Math.floor(duration / 4);
-        
-        return [
-            `Introduction (${timePerActivity} min): Engage students with a question about ${topic}`,
-            `Direct Instruction (${timePerActivity * 2} min): Present key concepts of ${topic} with visual aids`,
-            `Guided Practice (${timePerActivity} min): Students work on ${topic}-related problems with support`,
-            `Independent Practice (${timePerActivity} min): Students apply ${topic} knowledge independently`
-        ];
-    }
-
-    generateMaterials(topic, grade, subject) {
-        return [
-            `Visual aids related to ${topic}`,
-            `Hands-on materials for ${topic} exploration`,
-            `Student worksheets and activity sheets`,
-            `Technology tools for ${topic} demonstration`,
-            `Assessment rubrics and checklists`
-        ];
-    }
-
-    generateAssessment(topic, grade, subject) {
-        return [
-            `Formative assessment through observation during ${topic} activities`,
-            `Summative assessment with written responses about ${topic}`,
-            `Peer assessment of ${topic} presentations`,
-            `Self-reflection on ${topic} learning progress`
-        ];
-    }
-
-    generateDifferentiation(topic, grade, subject) {
-        return {
-            forStrugglingLearners: [
-                `Provide additional visual supports for ${topic}`,
-                `Use hands-on manipulatives to explain ${topic}`,
-                `Allow extra time for ${topic} concept processing`,
-                `Break down ${topic} into smaller, manageable steps`
-            ],
-            forAdvancedLearners: [
-                `Offer extension activities exploring advanced ${topic} concepts`,
-                `Encourage independent research on ${topic} applications`,
-                `Provide leadership opportunities in ${topic} group work`,
-                `Challenge with real-world ${topic} problem-solving`
-            ],
-            forELLStudents: [
-                `Use visual supports and gestures for ${topic} vocabulary`,
-                `Provide bilingual resources for ${topic} concepts`,
-                `Allow extra processing time for ${topic} understanding`,
-                `Use peer support for ${topic} language development`
-            ]
-        };
-    }
-
-    generateStandards(topic, grade, subject) {
-        const gradeLevel = parseInt(grade);
-        const subjectStandards = {
-            'Mathematics': `Common Core Math Standards for Grade ${grade}`,
-            'Science': `Next Generation Science Standards for Grade ${grade}`,
-            'English Language Arts': `Common Core ELA Standards for Grade ${grade}`,
-            'Social Studies': `State Social Studies Standards for Grade ${grade}`,
-            'Art': `National Core Arts Standards for Grade ${grade}`
-        };
-        
-        return [
-            subjectStandards[subject] || `Grade ${grade} ${subject} Standards`,
-            `21st Century Learning Skills`,
-            `Critical Thinking and Problem Solving`,
-            `Communication and Collaboration`
-        ];
-    }
-
-    extractObjectives(content) {
-        const objectives = [];
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.toLowerCase().includes('objective') && line.includes(':')) {
-                const obj = line.split(':')[1]?.trim();
-                if (obj) objectives.push(obj);
-            }
-        }
-        
-        // No static fallback - return empty array if no objectives found
-        return objectives;
-    }
-
-    extractActivities(content) {
-        const activities = [];
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.toLowerCase().includes('activity') || line.toLowerCase().includes('lesson')) {
-                if (line.trim() && !line.toLowerCase().includes('activities')) {
-                    activities.push(line.trim());
-                }
-            }
-        }
-        
-        // No static fallback - return empty array if no activities found
-        return activities;
-    }
-
-    extractMaterials(content) {
-        const materials = [];
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.toLowerCase().includes('material') || line.toLowerCase().includes('supplies')) {
-                const material = line.split(':')[1]?.trim();
-                if (material) materials.push(material);
-            }
-        }
-        
-        // No static fallback - return empty array if no materials found
-        return materials;
-    }
-
-    extractAssessment(content) {
-        const assessments = [];
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.toLowerCase().includes('assessment') || line.toLowerCase().includes('evaluation')) {
-                if (line.trim() && !line.toLowerCase().includes('assessments')) {
-                    assessments.push(line.trim());
-                }
-            }
-        }
-        
-        // No static fallback - return empty array if no assessments found
-        return assessments;
-    }
-
-    extractDifferentiation(content) {
-        const differentiation = {
-            forStrugglingLearners: [],
-            forAdvancedLearners: [],
-            forELLStudents: []
-        };
-        
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.toLowerCase().includes('struggling') || line.toLowerCase().includes('support')) {
-                differentiation.forStrugglingLearners.push(line.trim());
-            } else if (line.toLowerCase().includes('advanced') || line.toLowerCase().includes('extension')) {
-                differentiation.forAdvancedLearners.push(line.trim());
-            } else if (line.toLowerCase().includes('ell') || line.toLowerCase().includes('language')) {
-                differentiation.forELLStudents.push(line.trim());
-            }
-        }
-        
-        // No static fallback - return empty arrays if no differentiation found
-        return differentiation;
-    }
-
-    extractStandards(content) {
-        const standards = [];
-        const lines = content.split('\n');
-        
-        for (const line of lines) {
-            if (line.toLowerCase().includes('standard') || line.toLowerCase().includes('curriculum')) {
-                if (line.trim() && !line.toLowerCase().includes('standards')) {
-                    standards.push(line.trim());
-                }
-            }
-        }
-        
-        // No static fallback - return empty array if no standards found
-        return standards;
-    }
+    // Removed all static data extraction methods - we only use GitHub AI API responses
 
     updateAIStatus(type, message) {
         const statusDiv = document.getElementById('aiStatus');
