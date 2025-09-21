@@ -694,8 +694,10 @@ class LessonPlanGenerator {
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if free LLM integration is available
-    if (window.FreeLLMLessonGenerator) {
+    // Check if working LLM integration is available
+    if (window.WorkingLLMLessonGenerator) {
+        new WorkingLLMLessonGenerator();
+    } else if (window.FreeLLMLessonGenerator) {
         new FreeLLMLessonGenerator();
     } else if (window.LLMEnhancedLessonGenerator) {
         new LLMEnhancedLessonGenerator();
