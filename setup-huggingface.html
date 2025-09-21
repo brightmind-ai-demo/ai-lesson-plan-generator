@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Hugging Face Token - BrightMind AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .step h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .step ol {
+            padding-left: 20px;
+        }
+
+        .step li {
+            margin-bottom: 10px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .step a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .step a:hover {
+            text-decoration: underline;
+        }
+
+        .token-input {
+            margin-top: 20px;
+        }
+
+        .token-input label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .token-input input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .token-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .features {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .features h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 8px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="logo">
+            <h1>🧠 BrightMind AI</h1>
+            <p>Setup Hugging Face Integration</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 1: Get Your Hugging Face Token</h3>
+            <ol>
+                <li>Go to <a href="https://huggingface.co/settings/tokens" target="_blank">Hugging Face Settings</a></li>
+                <li>Click "New token"</li>
+                <li>Give it a name like "BrightMind AI"</li>
+                <li>Select "Read" permissions</li>
+                <li>Click "Generate a token"</li>
+                <li>Copy the token (starts with "hf_")</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Enter Your Token</h3>
+            <div class="token-input">
+                <label for="token">Hugging Face Token:</label>
+                <input type="password" id="token" placeholder="hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>What You Get with Hugging Face:</h3>
+            <ul>
+                <li>Free access to powerful AI models</li>
+                <li>Enhanced lesson plan generation</li>
+                <li>Better quiz and content creation</li>
+                <li>No usage limits for educational purposes</li>
+                <li>Secure token storage in your browser</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" onclick="skipSetup()">Skip (Use Algorithms Only)</button>
+            <button class="btn btn-primary" onclick="saveToken()">Save Token & Continue</button>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        function saveToken() {
+            const token = document.getElementById('token').value.trim();
+            
+            if (!token) {
+                showStatus('Please enter your Hugging Face token', 'error');
+                return;
+            }
+            
+            if (!token.startsWith('hf_')) {
+                showStatus('Invalid token format. Token should start with "hf_"', 'error');
+                return;
+            }
+            
+            // Save token to localStorage
+            localStorage.setItem('huggingface_token', token);
+            
+            showStatus('✅ Token saved successfully! Redirecting to BrightMind AI...', 'success');
+            
+            // Redirect to main app after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+        
+        function skipSetup() {
+            showStatus('Using educational algorithms only. Redirecting...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+        
+        // Check if token already exists
+        window.addEventListener('load', () => {
+            const existingToken = localStorage.getItem('huggingface_token');
+            if (existingToken) {
+                document.getElementById('token').value = existingToken;
+                showStatus('✅ Token already saved! You can update it or continue.', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

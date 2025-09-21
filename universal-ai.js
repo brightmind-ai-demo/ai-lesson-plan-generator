@@ -79,6 +79,100 @@ Token:`);
         return token;
     }
 
+    getHuggingFaceToken() {
+        // Check for token in localStorage first
+        let token = localStorage.getItem('huggingface_token');
+        
+        if (!token) {
+            // Check for Codespaces secret
+            if (typeof process !== 'undefined' && process.env && process.env.HUGGINGFACE_TOKEN) {
+                token = process.env.HUGGINGFACE_TOKEN;
+                console.log('✅ Using Codespaces secret Hugging Face token');
+            } else {
+                console.log('⚠️ No Hugging Face token available');
+                return null;
+            }
+        }
+        
+        return token;
+    }
+
+    async generateWithHuggingFace(data, token) {
+        const prompt = this.createAIPrompt(data);
+        
+        console.log('🌐 Making API call to Hugging Face...');
+        console.log('🔗 Endpoint: https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium');
+        console.log('📝 Prompt length:', prompt.length);
+        
+        try {
+            const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    inputs: prompt,
+                    parameters: {
+                        max_length: 1000,
+                        temperature: 0.7,
+                        do_sample: true
+                    }
+                })
+            });
+
+            console.log('📡 API Response Status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ API Error Response:', errorText);
+                throw new Error(`Hugging Face API request failed: ${response.status} - ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ API Response received:', result);
+            
+            return this.parseHuggingFaceResponse(result, data);
+            
+        } catch (error) {
+            console.error('❌ Hugging Face API Error:', error);
+            throw error;
+        }
+    }
+
+    parseHuggingFaceResponse(result, data) {
+        let content = '';
+        
+        if (Array.isArray(result) && result.length > 0) {
+            content = result[0].generated_text || '';
+        } else if (result.generated_text) {
+            content = result.generated_text;
+        } else if (typeof result === 'string') {
+            content = result;
+        }
+        
+        if (!content) {
+            throw new Error('No content generated from Hugging Face API');
+        }
+        
+        // Parse the generated content into lesson plan structure
+        return {
+            topic: data.topic,
+            subject: data.subject,
+            gradeLevel: data.gradeLevel,
+            duration: data.duration,
+            difficulty: data.difficulty || 'intermediate',
+            objectives: this.extractObjectives(content),
+            activities: this.extractActivities(content),
+            materials: this.extractMaterials(content),
+            assessment: this.extractAssessment(content),
+            differentiation: this.extractDifferentiation(content),
+            standards: this.extractStandards(content),
+            aiGenerated: true,
+            generatedAt: new Date().toLocaleDateString()
+        };
+    }
+
     generateWithEducationalAlgorithms(data) {
         console.log('🎯 Generating lesson plan with educational algorithms...');
         
@@ -315,19 +409,19 @@ Token:`);
         console.log('🎓 Grade:', data.gradeLevel);
         console.log('⏱️ Duration:', data.duration);
         
-        // Try GitHub AI first if token is available
-        const token = this.getGitHubToken();
-        if (token) {
+        // Try Hugging Face first if token is available
+        const hfToken = this.getHuggingFaceToken();
+        if (hfToken) {
             try {
-                console.log('🤖 Using GitHub AI API...');
-                const aiResult = await this.generateWithGitHubAI(data);
-                console.log('✅ Successfully generated with GitHub AI API');
+                console.log('🤖 Using Hugging Face API...');
+                const aiResult = await this.generateWithHuggingFace(data, hfToken);
+                console.log('✅ Successfully generated with Hugging Face API');
                 return aiResult;
             } catch (error) {
-                console.warn('⚠️ GitHub AI failed, falling back to educational algorithms:', error.message);
+                console.warn('⚠️ Hugging Face failed, falling back to educational algorithms:', error.message);
             }
         } else {
-            console.log('📚 No token available, using educational algorithms...');
+            console.log('📚 No Hugging Face token available, using educational algorithms...');
         }
         
         // Fallback to educational algorithms
