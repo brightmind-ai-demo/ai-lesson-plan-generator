@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lesson Plan Generator - Smart Teaching Tools</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>AI Lesson Plan Generator</h1>
+            </div>
+            <p class="tagline">Create engaging, standards-aligned lesson plans in minutes</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Form -->
+            <section class="input-section">
+                <div class="form-container">
+                    <h2>Generate Your Lesson Plan</h2>
+                    <form id="lessonForm" class="lesson-form">
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="math">Mathematics</option>
+                                <option value="science">Science</option>
+                                <option value="english">English Language Arts</option>
+                                <option value="history">History/Social Studies</option>
+                                <option value="art">Art</option>
+                                <option value="music">Music</option>
+                                <option value="pe">Physical Education</option>
+                                <option value="foreign-language">Foreign Language</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gradeLevel">Grade Level</label>
+                            <select id="gradeLevel" name="gradeLevel" required>
+                                <option value="">Select grade level</option>
+                                <option value="k">Kindergarten</option>
+                                <option value="1">1st Grade</option>
+                                <option value="2">2nd Grade</option>
+                                <option value="3">3rd Grade</option>
+                                <option value="4">4th Grade</option>
+                                <option value="5">5th Grade</option>
+                                <option value="6">6th Grade</option>
+                                <option value="7">7th Grade</option>
+                                <option value="8">8th Grade</option>
+                                <option value="9">9th Grade</option>
+                                <option value="10">10th Grade</option>
+                                <option value="11">11th Grade</option>
+                                <option value="12">12th Grade</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="topic">Topic/Lesson Title</label>
+                            <input type="text" id="topic" name="topic" placeholder="e.g., Photosynthesis, Fractions, World War II" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration">Lesson Duration (minutes)</label>
+                            <select id="duration" name="duration" required>
+                                <option value="">Select duration</option>
+                                <option value="30">30 minutes</option>
+                                <option value="45">45 minutes</option>
+                                <option value="60">60 minutes</option>
+                                <option value="90">90 minutes</option>
+                                <option value="120">120 minutes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="learningObjectives">Learning Objectives (optional)</label>
+                            <textarea id="learningObjectives" name="learningObjectives" placeholder="What should students learn? (e.g., Students will be able to identify the parts of a plant)"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="difficulty">Difficulty Level</label>
+                            <select id="difficulty" name="difficulty">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="generate-btn">
+                            <i class="fas fa-magic"></i>
+                            Generate Lesson Plan
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <section id="loadingSection" class="loading-section hidden">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Generating your lesson plan...</h3>
+                    <p>Our AI is creating a comprehensive, standards-aligned lesson plan for you.</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section hidden">
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2>Your Generated Lesson Plan</h2>
+                        <div class="action-buttons">
+                            <button id="downloadBtn" class="btn-secondary">
+                                <i class="fas fa-download"></i>
+                                Download PDF
+                            </button>
+                            <button id="regenerateBtn" class="btn-secondary">
+                                <i class="fas fa-redo"></i>
+                                Regenerate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="lessonPlanContent" class="lesson-plan-content">
+                        <!-- Generated content will be inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features-section">
+                <h2>Why Choose Our AI Lesson Plan Generator?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Save Time</h3>
+                        <p>Generate complete lesson plans in under 2 minutes instead of hours of planning.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Standards Aligned</h3>
+                        <p>All lesson plans are aligned with Common Core and state educational standards.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Differentiated Learning</h3>
+                        <p>Includes activities for different learning styles and ability levels.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Assessment Ready</h3>
+                        <p>Built-in formative and summative assessment strategies.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 AI Lesson Plan Generator. Built for educators, by educators.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
