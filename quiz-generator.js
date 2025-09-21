@@ -36,11 +36,14 @@ class QuizGenerator {
         const formData = this.getQuizFormData();
         this.showQuizLoading();
         
-        // Simulate AI processing time
-        await this.delay(2000);
-        
-        const quiz = this.generateQuiz(formData);
-        this.displayQuizResults(quiz);
+        try {
+            console.log('🚀 Generating quiz with GitHub AI API...');
+            const quiz = await this.generateQuizWithAI(formData);
+            this.displayQuizResults(quiz);
+        } catch (error) {
+            console.error('❌ Quiz generation failed:', error);
+            this.showQuizError(error.message);
+        }
     }
 
     getQuizFormData() {
@@ -67,26 +70,192 @@ class QuizGenerator {
         }
     }
 
-    generateQuiz(data) {
-        const questions = [];
-        const questionCount = data.questionCount;
-        const questionTypes = data.questionTypes;
+    async generateQuizWithAI(data) {
+        const prompt = this.createQuizPrompt(data);
+        const token = this.getGitHubToken();
         
-        // Generate questions based on topic and subject
-        for (let i = 0; i < questionCount; i++) {
-            const questionType = questionTypes[i % questionTypes.length];
-            const question = this.generateQuestion(data, questionType, i + 1);
-            questions.push(question);
+        if (!token) {
+            throw new Error('No GitHub token available');
+        }
+        
+        console.log('🌐 Making API call to GitHub AI for quiz generation...');
+        console.log('🔗 Endpoint: https://models.github.ai/inference/chat/completions');
+        console.log('🤖 Model: gpt-4o');
+        console.log('📝 Prompt length:', prompt.length);
+        
+        try {
+            const response = await fetch('https://models.github.ai/inference/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [{ role: 'user', content: prompt }],
+                    max_tokens: 2000,
+                    temperature: 0.7
+                })
+            });
+
+            console.log('📡 API Response Status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ API Error Response:', errorText);
+                throw new Error(`API request failed: ${response.status} - ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ API Response received:', result);
+            console.log('📄 Generated quiz content length:', result.choices?.[0]?.message?.content?.length || 0);
+            
+            return this.parseQuizResponse(result, data);
+            
+        } catch (error) {
+            console.error('❌ GitHub AI API Error:', error);
+            throw error;
+        }
+    }
+
+    createQuizPrompt(data) {
+        return `Create a comprehensive quiz about "${data.topic}" for ${data.grade} students studying ${data.subject}.
+
+Requirements:
+- Generate exactly ${data.questionCount} questions
+- Include these question types: ${data.questionTypes.join(', ')}
+- Make questions appropriate for ${data.grade} grade level
+- Ensure questions are specific to "${data.topic}"
+- Include correct answers and explanations
+- Make questions engaging and educational
+
+Format the response as a JSON object with this structure:
+{
+  "topic": "${data.topic}",
+  "subject": "${data.subject}",
+  "grade": "${data.grade}",
+  "questionCount": ${data.questionCount},
+  "questions": [
+    {
+      "id": 1,
+      "type": "multiple-choice",
+      "question": "Question text here",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswer": "Option A",
+      "explanation": "Explanation of why this is correct"
+    }
+  ]
+}`;
+    }
+
+    parseQuizResponse(result, data) {
+        const content = result.choices?.[0]?.message?.content || '';
+        
+        if (!content) {
+            throw new Error('No quiz content generated');
+        }
+        
+        try {
+            // Try to parse as JSON
+            const quizData = JSON.parse(content);
+            return {
+                ...quizData,
+                generatedAt: new Date().toLocaleDateString(),
+                aiGenerated: true
+            };
+        } catch (error) {
+            // If JSON parsing fails, create a structured response from text
+            return this.parseTextQuiz(content, data);
+        }
+    }
+
+    parseTextQuiz(content, data) {
+        // Parse text-based quiz response
+        const questions = [];
+        const lines = content.split('\n');
+        let currentQuestion = null;
+        let questionId = 1;
+        
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+            
+            if (trimmedLine.match(/^\d+\./)) {
+                // New question
+                if (currentQuestion) {
+                    questions.push(currentQuestion);
+                }
+                currentQuestion = {
+                    id: questionId++,
+                    type: 'multiple-choice',
+                    question: trimmedLine.replace(/^\d+\.\s*/, ''),
+                    options: [],
+                    correctAnswer: '',
+                    explanation: ''
+                };
+            } else if (trimmedLine.match(/^[A-D]\./)) {
+                // Answer option
+                if (currentQuestion) {
+                    currentQuestion.options.push(trimmedLine);
+                }
+            } else if (trimmedLine.toLowerCase().includes('answer:') || trimmedLine.toLowerCase().includes('correct:')) {
+                // Correct answer
+                if (currentQuestion) {
+                    currentQuestion.correctAnswer = trimmedLine.replace(/.*answer:?\s*/i, '').replace(/.*correct:?\s*/i, '');
+                }
+            }
+        }
+        
+        if (currentQuestion) {
+            questions.push(currentQuestion);
         }
         
         return {
             topic: data.topic,
             subject: data.subject,
             grade: data.grade,
-            questionCount: questionCount,
+            questionCount: questions.length,
             questions: questions,
-            generatedAt: new Date().toLocaleDateString()
+            generatedAt: new Date().toLocaleDateString(),
+            aiGenerated: true
         };
+    }
+
+    getGitHubToken() {
+        // Check for token in localStorage first
+        let token = localStorage.getItem('github_token');
+        
+        if (!token) {
+            // Check for Codespaces secret
+            if (typeof process !== 'undefined' && process.env && process.env.token) {
+                token = process.env.token;
+                console.log('✅ Using Codespaces secret token for quiz generation');
+            } else {
+                console.log('⚠️ No GitHub token available for quiz generation');
+                return null;
+            }
+        }
+        
+        return token;
+    }
+
+    showQuizError(message) {
+        const loadingSection = document.getElementById('quizLoading');
+        const resultsSection = document.getElementById('quizResults');
+        
+        if (loadingSection) {
+            loadingSection.classList.add('hidden');
+        }
+        
+        if (resultsSection) {
+            resultsSection.classList.remove('hidden');
+            resultsSection.innerHTML = `
+                <div class="error-message">
+                    <h3>❌ Quiz Generation Failed</h3>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" class="btn-primary">Try Again</button>
+                </div>
+            `;
+        }
     }
 
     generateQuestion(data, type, questionNumber) {

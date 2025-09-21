@@ -57,8 +57,22 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
                 token = process.env.token;
                 console.log('✅ Using Codespaces secret token');
             } else {
-                console.log('⚠️ No GitHub token available');
-                return null;
+                // Try to get token from prompt if not available
+                console.log('⚠️ No GitHub token found. Please enter your token:');
+                token = prompt(`Please enter your GitHub token:
+                
+1. Go to https://github.com/settings/tokens
+2. Create a new token with appropriate permissions
+3. Copy and paste it here
+
+Token:`);
+                if (token && token.startsWith('ghp_')) {
+                    localStorage.setItem('github_token', token);
+                    console.log('✅ GitHub token saved!');
+                } else {
+                    console.log('❌ Invalid token format. Should start with "ghp_"');
+                    return null;
+                }
             }
         }
         

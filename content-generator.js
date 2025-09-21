@@ -28,11 +28,14 @@ class ContentGenerator {
         const formData = this.getFormData();
         this.showLoading();
         
-        // Simulate AI processing time
-        await this.delay(2000);
-        
-        const content = this.generateContent(formData);
-        this.displayResults(content);
+        try {
+            console.log('🚀 Generating content with GitHub AI API...');
+            const content = await this.generateContentWithAI(formData);
+            this.displayResults(content);
+        } catch (error) {
+            console.error('❌ Content generation failed:', error);
+            this.showContentError(error.message);
+        }
     }
 
     validateForm() {
@@ -75,25 +78,200 @@ class ContentGenerator {
         contentDisplay.innerHTML = this.formatContent(content);
     }
 
-    generateContent(data) {
-        // Generate AI-powered educational content based on the form data
-        const content = {
+    async generateContentWithAI(data) {
+        const prompt = this.createContentPrompt(data);
+        const token = this.getGitHubToken();
+        
+        if (!token) {
+            throw new Error('No GitHub token available');
+        }
+        
+        console.log('🌐 Making API call to GitHub AI for content generation...');
+        console.log('🔗 Endpoint: https://models.github.ai/inference/chat/completions');
+        console.log('🤖 Model: gpt-4o');
+        console.log('📝 Prompt length:', prompt.length);
+        
+        try {
+            const response = await fetch('https://models.github.ai/inference/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [{ role: 'user', content: prompt }],
+                    max_tokens: 2000,
+                    temperature: 0.7
+                })
+            });
+
+            console.log('📡 API Response Status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ API Error Response:', errorText);
+                throw new Error(`API request failed: ${response.status} - ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ API Response received:', result);
+            console.log('📄 Generated content length:', result.choices?.[0]?.message?.content?.length || 0);
+            
+            return this.parseContentResponse(result, data);
+            
+        } catch (error) {
+            console.error('❌ GitHub AI API Error:', error);
+            throw error;
+        }
+    }
+
+    createContentPrompt(data) {
+        return `Create educational content for "${data.topic}" - ${data.type} for ${data.grade} students studying ${data.subject}.
+
+Requirements:
+- Content type: ${data.type}
+- Grade level: ${data.grade}
+- Subject: ${data.subject}
+- Topic: ${data.topic}
+- Additional requirements: ${data.description || 'None specified'}
+
+Please create comprehensive educational content that includes:
+1. Clear title and instructions
+2. Main content appropriate for the grade level
+3. Activities and exercises
+4. Assessment strategies
+5. Materials needed
+6. Learning objectives
+
+Format the response as a structured educational resource that teachers can use immediately.`;
+    }
+
+    parseContentResponse(result, data) {
+        const content = result.choices?.[0]?.message?.content || '';
+        
+        if (!content) {
+            throw new Error('No content generated');
+        }
+        
+        return {
             topic: data.topic,
             subject: data.subject,
             grade: data.grade,
             type: data.type,
             description: data.description,
-            title: this.generateTitle(data),
-            instructions: this.generateInstructions(data),
-            content: this.generateContentBody(data),
-            activities: this.generateActivities(data),
-            assessment: this.generateAssessment(data),
-            materials: this.generateMaterials(data),
+            title: this.extractTitle(content, data),
+            instructions: this.extractInstructions(content),
+            content: content,
+            activities: this.extractActivities(content),
+            assessment: this.extractAssessment(content),
+            materials: this.extractMaterials(content),
             aiGenerated: true,
             timestamp: new Date().toISOString()
         };
+    }
+
+    extractTitle(content, data) {
+        const lines = content.split('\n');
+        for (const line of lines) {
+            if (line.includes('#') || line.includes('Title:')) {
+                return line.replace(/^#+\s*/, '').replace(/^Title:\s*/, '').trim();
+            }
+        }
+        return `${data.type} - ${data.topic} (Grade ${data.grade})`;
+    }
+
+    extractInstructions(content) {
+        const lines = content.split('\n');
+        for (const line of lines) {
+            if (line.toLowerCase().includes('instruction') || line.toLowerCase().includes('directions')) {
+                return line.replace(/^.*instruction[s]?:\s*/i, '').replace(/^.*direction[s]?:\s*/i, '').trim();
+            }
+        }
+        return 'Follow the instructions provided in the content.';
+    }
+
+    extractActivities(content) {
+        const activities = [];
+        const lines = content.split('\n');
         
-        return content;
+        for (const line of lines) {
+            if (line.toLowerCase().includes('activity') || line.toLowerCase().includes('exercise')) {
+                if (line.trim() && !line.toLowerCase().includes('activities')) {
+                    activities.push(line.trim());
+                }
+            }
+        }
+        
+        return activities.length > 0 ? activities : ['Complete the provided exercises'];
+    }
+
+    extractAssessment(content) {
+        const assessments = [];
+        const lines = content.split('\n');
+        
+        for (const line of lines) {
+            if (line.toLowerCase().includes('assessment') || line.toLowerCase().includes('evaluation')) {
+                if (line.trim() && !line.toLowerCase().includes('assessments')) {
+                    assessments.push(line.trim());
+                }
+            }
+        }
+        
+        return assessments.length > 0 ? assessments : ['Review student work and provide feedback'];
+    }
+
+    extractMaterials(content) {
+        const materials = [];
+        const lines = content.split('\n');
+        
+        for (const line of lines) {
+            if (line.toLowerCase().includes('material') || line.toLowerCase().includes('supplies')) {
+                if (line.trim() && !line.toLowerCase().includes('materials')) {
+                    materials.push(line.trim());
+                }
+            }
+        }
+        
+        return materials.length > 0 ? materials : ['Basic writing materials'];
+    }
+
+    getGitHubToken() {
+        // Check for token in localStorage first
+        let token = localStorage.getItem('github_token');
+        
+        if (!token) {
+            // Check for Codespaces secret
+            if (typeof process !== 'undefined' && process.env && process.env.token) {
+                token = process.env.token;
+                console.log('✅ Using Codespaces secret token for content generation');
+            } else {
+                console.log('⚠️ No GitHub token available for content generation');
+                return null;
+            }
+        }
+        
+        return token;
+    }
+
+    showContentError(message) {
+        const loadingSection = document.getElementById('contentLoading');
+        const resultsSection = document.getElementById('contentResults');
+        
+        if (loadingSection) {
+            loadingSection.classList.add('hidden');
+        }
+        
+        if (resultsSection) {
+            resultsSection.classList.remove('hidden');
+            resultsSection.innerHTML = `
+                <div class="error-message">
+                    <h3>❌ Content Generation Failed</h3>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" class="btn-primary">Try Again</button>
+                </div>
+            `;
+        }
     }
 
     generateTitle(data) {
