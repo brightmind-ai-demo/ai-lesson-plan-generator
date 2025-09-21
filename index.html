@@ -342,6 +342,98 @@
             </div>
         </section>
 
+        <!-- Content Generator Section -->
+        <section id="content-generator" class="content-section">
+            <div class="content-container">
+                <h2 class="section-title">Educational Content Generator</h2>
+                <p class="section-subtitle">Generate worksheets, handouts, and educational materials automatically</p>
+                
+                <div class="content-form-container">
+                    <form id="contentForm" class="content-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contentTopic">Content Topic</label>
+                                <input type="text" id="contentTopic" name="contentTopic" placeholder="e.g., Solar System, Ancient Rome, Algebra" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contentSubject">Subject</label>
+                                <select id="contentSubject" name="contentSubject" required>
+                                    <option value="">Select subject</option>
+                                    <option value="science">Science</option>
+                                    <option value="history">History</option>
+                                    <option value="math">Mathematics</option>
+                                    <option value="english">English Language Arts</option>
+                                    <option value="geography">Geography</option>
+                                    <option value="art">Art</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contentGrade">Grade Level</label>
+                                <select id="contentGrade" name="contentGrade" required>
+                                    <option value="">Select grade</option>
+                                    <option value="k-2">K-2</option>
+                                    <option value="3-5">3-5</option>
+                                    <option value="6-8">6-8</option>
+                                    <option value="9-12">9-12</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contentType">Content Type</label>
+                                <select id="contentType" name="contentType" required>
+                                    <option value="">Select type</option>
+                                    <option value="worksheet">Worksheet</option>
+                                    <option value="handout">Handout</option>
+                                    <option value="reading">Reading Comprehension</option>
+                                    <option value="activity">Activity Sheet</option>
+                                    <option value="assessment">Assessment</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contentDescription">Additional Requirements</label>
+                            <textarea id="contentDescription" name="contentDescription" placeholder="Describe any specific requirements or focus areas..." rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="generate-btn">
+                            <i class="fas fa-magic"></i>
+                            Generate Content
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Content Results -->
+                <div id="contentLoading" class="loading-section hidden">
+                    <div class="loading-content">
+                        <i class="fas fa-cog fa-spin"></i>
+                        <h3>Generating Educational Content...</h3>
+                        <p>Creating personalized materials for your students</p>
+                    </div>
+                </div>
+                
+                <div id="contentResults" class="results-section hidden">
+                    <div class="results-header">
+                        <h3>Generated Content</h3>
+                        <div class="results-actions">
+                            <button id="regenerateContent" class="btn-secondary">
+                                <i class="fas fa-redo"></i>
+                                Regenerate
+                            </button>
+                            <button id="downloadContent" class="btn-primary">
+                                <i class="fas fa-download"></i>
+                                Download PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div id="contentDisplay" class="content-display">
+                        <!-- Generated content will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Footer -->
         <footer class="footer">
@@ -375,5 +467,6 @@
     <script src="script.js?v=6"></script>
     <script src="universal-ai.js?v=6"></script>
     <script src="quiz-generator.js?v=6"></script>
+    <script src="content-generator.js?v=6"></script>
 </body>
 </html>
