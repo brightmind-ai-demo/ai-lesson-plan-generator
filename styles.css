@@ -387,12 +387,80 @@ body {
     animation: fadeIn 0.6s ease-out;
 }
 
+/* LLM Integration Styles */
+.llm-selector {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 2px solid #e1e8ed;
+    margin-bottom: 1.5rem;
+}
+
+.llm-selector label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.llm-selector select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.llm-selector select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.llm-status {
+    margin-top: 1rem;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.llm-status i {
+    color: #667eea;
+}
+
+.llm-status.success {
+    background: #d4edda;
+    border-left-color: #28a745;
+    color: #155724;
+}
+
+.llm-status.error {
+    background: #f8d7da;
+    border-left-color: #dc3545;
+    color: #721c24;
+}
+
+.llm-status.warning {
+    background: #fff3cd;
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
 /* Print Styles */
 @media print {
     .header,
     .features-section,
     .footer,
-    .action-buttons {
+    .action-buttons,
+    .llm-selector {
         display: none;
     }
     
