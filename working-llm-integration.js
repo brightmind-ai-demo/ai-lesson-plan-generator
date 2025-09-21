@@ -22,18 +22,20 @@ class WorkingLLMLessonGenerator extends LessonPlanGenerator {
             huggingface: {
                 name: 'Hugging Face AI (Free)',
                 endpoint: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-                requiresKey: false,
+                requiresKey: true,
                 maxTokens: 200,
-                description: 'Free AI model for text generation'
+                description: 'Free AI model for text generation',
+                apiKey: this.getHuggingFaceToken()
             },
             
             // Alternative Hugging Face model
             huggingface2: {
                 name: 'Hugging Face GPT-2 (Free)',
                 endpoint: 'https://api-inference.huggingface.co/models/gpt2',
-                requiresKey: false,
+                requiresKey: true,
                 maxTokens: 150,
-                description: 'GPT-2 model for text generation'
+                description: 'GPT-2 model for text generation',
+                apiKey: this.getHuggingFaceToken()
             },
             
             // Local AI simulation (Fallback)
@@ -45,6 +47,32 @@ class WorkingLLMLessonGenerator extends LessonPlanGenerator {
                 description: 'Local educational algorithms'
             }
         };
+    }
+
+    getHuggingFaceToken() {
+        // Check for token in localStorage first
+        let token = localStorage.getItem('huggingface_token');
+        
+        if (!token) {
+            // Prompt user for token
+            token = prompt(`Please enter your Hugging Face token:
+            
+1. Go to https://huggingface.co/settings/tokens
+2. Create a new token (free)
+3. Copy and paste it here
+
+Token:`);
+            
+            if (token && token.startsWith('hf_')) {
+                localStorage.setItem('huggingface_token', token);
+                console.log('✅ Hugging Face token saved!');
+            } else {
+                console.log('❌ Invalid token format. Should start with "hf_"');
+                return null;
+            }
+        }
+        
+        return token;
     }
 
     addLLMControls() {
@@ -175,11 +203,19 @@ class WorkingLLMLessonGenerator extends LessonPlanGenerator {
             }
             
             console.log('Making API call to:', service.endpoint);
+            
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            // Add authorization header if API key is available
+            if (service.apiKey) {
+                headers['Authorization'] = `Bearer ${service.apiKey}`;
+            }
+            
             const response = await fetch(service.endpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: headers,
                 body: JSON.stringify({
                     inputs: prompt,
                     parameters: {
