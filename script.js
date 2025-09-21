@@ -323,7 +323,7 @@ class LessonPlanGenerator {
                 <p><strong>Grade Level:</strong> ${lesson.gradeLevel}</p>
                 <p><strong>Topic:</strong> ${lesson.topic}</p>
                 <p><strong>Duration:</strong> ${lesson.duration} minutes</p>
-                <p><strong>Difficulty:</strong> ${lesson.difficulty.charAt(0).toUpperCase() + lesson.difficulty.slice(1)}</p>
+                <p><strong>Difficulty:</strong> ${lesson.difficulty ? lesson.difficulty.charAt(0).toUpperCase() + lesson.difficulty.slice(1) : 'Intermediate'}</p>
             </div>
 
             <div class="lesson-plan-section">
