@@ -26,15 +26,43 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
                 priority: 1
             },
             
-            // Secondary: Free AI APIs (No token required)
+            // Secondary: GitHub AI (If token available)
+            github: {
+                name: 'GitHub AI (Enhanced)',
+                endpoint: 'https://models.github.ai/inference/chat/completions',
+                requiresKey: true,
+                description: 'GitHub AI with GPT-4o (Best Quality)',
+                priority: 2,
+                apiKey: this.getGitHubToken()
+            },
+            
+            // Tertiary: Free AI APIs (No token required)
             freeAI: {
                 name: 'Free AI Enhancement',
                 endpoint: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
                 requiresKey: false,
                 description: 'Free AI enhancement (may be limited)',
-                priority: 2
+                priority: 3
             }
         };
+    }
+
+    getGitHubToken() {
+        // Check for token in localStorage first
+        let token = localStorage.getItem('github_token');
+        
+        if (!token) {
+            // Check for Codespaces secret
+            if (typeof process !== 'undefined' && process.env && process.env.token) {
+                token = process.env.token;
+                console.log('✅ Using Codespaces secret token');
+            } else {
+                console.log('⚠️ No GitHub token available');
+                return null;
+            }
+        }
+        
+        return token;
     }
 
     addAIControls() {
@@ -48,6 +76,7 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
             <label for="aiService">AI Enhancement Level</label>
             <select id="aiService" name="aiService">
                 <option value="local">Smart Algorithms (Fast & Reliable)</option>
+                <option value="github">GitHub AI (Best Quality)</option>
                 <option value="freeAI">Free AI Enhancement (Limited)</option>
             </select>
             <div class="ai-status" id="aiStatus">
@@ -84,8 +113,19 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
         console.log('Using Smart Educational Algorithms (Universal Access)');
         this.updateAIStatus('success', 'Using Smart Educational Algorithms');
         
-        // Try free AI as enhancement if selected
-        if (this.currentService === 'freeAI') {
+        // Try AI enhancement if selected
+        if (this.currentService === 'github') {
+            try {
+                console.log('Attempting GitHub AI enhancement...');
+                const aiResult = await this.generateWithGitHubAI(data);
+                if (aiResult) {
+                    this.updateAIStatus('success', 'Enhanced with GitHub AI');
+                    return aiResult;
+                }
+            } catch (error) {
+                console.log('GitHub AI failed, using algorithms:', error.message);
+            }
+        } else if (this.currentService === 'freeAI') {
             try {
                 console.log('Attempting free AI enhancement...');
                 const aiResult = await this.generateWithFreeAI(data);
@@ -100,6 +140,42 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
         
         // Use the reliable local algorithms
         return super.generateLessonPlan(data);
+    }
+
+    async generateWithGitHubAI(data) {
+        const prompt = this.createAIPrompt(data);
+        const token = this.getGitHubToken();
+        
+        if (!token) {
+            throw new Error('No GitHub token available');
+        }
+        
+        try {
+            const response = await fetch('https://models.github.ai/inference/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [{ role: 'user', content: prompt }],
+                    max_tokens: 2000,
+                    temperature: 0.7
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API request failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+            return this.parseGitHubAIResponse(result, data);
+            
+        } catch (error) {
+            console.error('GitHub AI generation error:', error);
+            throw error;
+        }
     }
 
     async generateWithFreeAI(data) {
@@ -134,6 +210,17 @@ class UniversalAILessonGenerator extends LessonPlanGenerator {
 
     createAIPrompt(data) {
         return `Create a lesson plan for ${this.formatSubject(data.subject)} grade ${data.gradeLevel} about "${data.topic}" for ${data.duration} minutes. Include learning objectives, activities, and assessment strategies.`;
+    }
+
+    parseGitHubAIResponse(result, data) {
+        let content = result.choices?.[0]?.message?.content || '';
+        
+        if (!content) {
+            throw new Error('No content generated');
+        }
+        
+        // Parse the AI response into lesson plan format
+        return this.parseLessonPlanFromAI(content, data);
     }
 
     parseAIResponse(result, data) {
